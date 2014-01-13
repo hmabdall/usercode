@@ -2269,8 +2269,6 @@ void tagAndProbeBJet(TString catalog_code,Bool_t regenerate=true){
 		rec_gen_delR->Draw();
 }
 
-
-
 void justValidating(TString catalog_code, Bool_t regenerate=true){
 	
 	// print input summary to console
@@ -2360,8 +2358,13 @@ void makeLargeChainsBefore(){
 	chainMaker(chain12, "ttB-4p-900-1600-v1510",true);
 
 }
+
 void validateThisOneBackground(TString catalog_code, Double_t xsect, Double_t sample_set_info[]){
 	TString cat_code = catalog_code;
+	// cout << "this is the background: " << catalog_code << endl;
+	// cout << "the cross section passed to this function is: " << xsect << endl;
+	// cout << "press enter to continue bitch" << endl;
+	// cin.get();
 
 	// create chain to store the data
 	TChain *chain = new TChain("Delphes");
@@ -2380,8 +2383,10 @@ void validateThisOneBackground(TString catalog_code, Double_t xsect, Double_t sa
 	TClonesArray *branchEvent = treeReader->UseBranch("Event");
 
 	// declare variables to be used
-	Int_t bb_unnormalized_yield = 0, gg_unnormalized_yield = 0, bbgg_unnormalized_yield = 0;
-	Int_t bb_normalized_yield = 0, gg_normalized_yield = 0, bbgg_normalized_yield = 0;
+	Double_t bb_unnormalized_yield = 0, gg_unnormalized_yield = 0, bbgg_unnormalized_yield = 0;
+	Double_t bb_normalized_yield = 0, gg_normalized_yield = 0, bbgg_normalized_yield = 0;
+
+	Double_t yield_tester = 0;
 
 	Double_t lumi = 3000;
 
@@ -2390,25 +2395,28 @@ void validateThisOneBackground(TString catalog_code, Double_t xsect, Double_t sa
 	cout << "STARTING EVENT LOOP. GOING TO LOOP OVER " << numEvents << " EVENTS. " << endl << "IN THE SAMPLE: " << catalog_code << endl << endl;
 	cout << "------------------------------------------------------------------------------" << endl << endl;
 
+	// create event object
 	LHEFEvent *event;
+
+	// loop through the events
 	for (Int_t jentry = 0; jentry < numberOfEntries; jentry++){
 		
+		// provide progress to user by printing to console...
 		if (jentry % 5000 == 0){cout << "processing event no: " << jentry << endl;}
-		// cout << "processing event no: " << jentry << endl;
 
-
+		// read the event
 		treeReader->ReadEntry(jentry);
 
-		// get branch sizes before you loop through the branches
+		// get branch sizes before you loop through the branches in the event
 		Int_t rec_photon_size = branchRecPhoton->GetEntriesFast();
 		Int_t jet_size = branchJet->GetEntriesFast();
 
 		// ------------------------------------------------------------
 		// CALCULATE EVENT WEIGHT
 		// ------------------------------------------------------------
-		Int_t weight = 1;
+		Double_t weight = 1;
 
-		Double_t tmp_weight = (xsect * lumi)/numberOfEntries;
+		Double_t tmp_weight =  (Double_t) (xsect * lumi)/numberOfEntries;
 
 		// get event object from branc
 		event = (LHEFEvent*)branchEvent->At(0); // there should only be one event weight per event, and it should be located at the first index
@@ -2418,12 +2426,22 @@ void validateThisOneBackground(TString catalog_code, Double_t xsect, Double_t sa
 		Double_t event_weight = event->Weight; // read Event.weight leaf and store it
 
 		// compute the weight
-		weight = event_weight * tmp_weight;
+		weight = (Double_t) (event_weight * tmp_weight);
+
+		
+		// cout << "xsect" << xsect << endl;
+		// cout << "lumi" << lumi << endl;
+		// cout << "tmp_weight" << tmp_weight << endl;
+
+		// cout << "event_weight" << event_weight << endl;
+		// cout << "weight" << weight << endl;
+		// cout << "press enter to continue" << endl;
+		// cin.get();
 
 
-		// ---------------------------------------------------------------		
-		// DETERMINE NUMBER OF LEGIT Photons IN THIS EVENT
-		// ---------------------------------------------------------------
+		// ---------------------------------------------------------------------	
+		// DETERMINE NUMBER OF LEGIT Photons IN THIS EVENT (pre-selection cuts)
+		// ---------------------------------------------------------------------
 		
 		Int_t numPhotons = 0;
 		
@@ -2441,11 +2459,32 @@ void validateThisOneBackground(TString catalog_code, Double_t xsect, Double_t sa
 			numPhotons++;
 		}
 
-		if (numPhotons >= 2) gg_unnormalized_yield += weight;
+		if (numPhotons >= 2) {
+			gg_unnormalized_yield += weight;
+			yield_tester++;
+	
+			// cout << "it turns out there is an event with >=2 photons" << endl;
+			
+			// cout << "xsect" << xsect << endl;
+			// cout << "lumi" << lumi << endl;
+			// cout << "tmp_weight" << tmp_weight << endl;
 
-		// ---------------------------------------------------------------		
-		// DETERMINE NUMBER OF LEGIT B-Jets IN THIS EVENT
-		// ---------------------------------------------------------------
+			// cout << "event_weight" << event_weight << endl;
+			// cout << "weight" << weight << endl;
+			// cout << "press enter to continue" << endl;
+			// cin.get();
+
+			// cout << "event no: " << jentry << endl;
+			// cout << "press enter to continue: " << endl;
+			// cin.get();
+		}
+
+		//cout << "yield_tester: " << yield_tester << endl;
+		//cin.get();
+
+		// ---------------------------------------------------------------------		
+		// DETERMINE NUMBER OF LEGIT B-Jets IN THIS EVENT (pre-selection cuts)
+		// ---------------------------------------------------------------------
 
 		vector<Jet*> recBJets;
 		Int_t numBJets = 0;
@@ -2467,24 +2506,39 @@ void validateThisOneBackground(TString catalog_code, Double_t xsect, Double_t sa
 		    }
 		}
 
-		if (numBJets >= 2) bb_unnormalized_yield++;
+		if (numBJets >= 2) bb_unnormalized_yield += weight;
 
 		// ------------------------------------------------------------------		
 		// DETERMINE IF THIS EVENT HAS 2 OR MORE OF EACH B-JETS AND PHOTONS
 		// ------------------------------------------------------------------
 
-		if ((numBJets && numPhotons) >= 2) bbgg_unnormalized_yield++;
+		if ((numBJets >= 2) && (numPhotons >= 2)) {
+			bbgg_unnormalized_yield += weight;
+			//cout << "wait there's actually an event with both 2 bb and 2 gg" << endl;
+			//cin.get();
+		}
 
 		// ------------------------------------------------------------------		
 		// NORMALIZE THE YIELDS
 		// ------------------------------------------------------------------
 		
-		bb_normalized_yield = (Double_t) (xsect * bb_unnormalized_yield/(numEvents * lumi));
-		gg_normalized_yield = (Double_t) (xsect * gg_unnormalized_yield/(numEvents * lumi));
-		bbgg_normalized_yield = (Double_t) (xsect * bbgg_unnormalized_yield/(numEvents * lumi));
+		bb_normalized_yield = (Double_t)(xsect * bb_unnormalized_yield/(numEvents * lumi));
+		gg_normalized_yield = (Double_t)(xsect * gg_unnormalized_yield/(numEvents * lumi));
+		bbgg_normalized_yield = (Double_t)(xsect * bbgg_unnormalized_yield/(numEvents * lumi));
 
 	}
 
+	cout << "sample: " << catalog_code << endl;
+	cout << "bb_raw: " << bb_unnormalized_yield << endl;
+	cout << "gg_raw: " << gg_unnormalized_yield << endl;
+	cout << "bbgg_raw: " << bbgg_unnormalized_yield << endl;
+	cout << "press enter to continue, end of sample." << endl;
+	cin.get();
+	// cout << "xsect" << xsect << endl;
+	// cout << "bb_unnormalized_yield" << bb_unnormalized_yield << endl;
+	// cout << "numEvents" << numEvents << endl;
+	// cout << "lumi" << lumi << endl;
+	//cout << "bbgg_unnormalized_yield" << bbgg_unnormalized_yield << endl;
 
 	// ----------------------------------------
 	// STORE INFO IN THE ARRAY PASSED BY REF. 
@@ -2562,72 +2616,94 @@ void printTableRow(TString BG, TString config, TString sample_set, Double_t xsec
 	cout << " | " <<  setw(7) << sample_set_info[4] << " | " << setw(7) << sample_set_info[5] << " | " << setw(7) << sample_set_info[6] << " | " << endl;
 
 }
+void regenerateTheseTextFiles(){
+
+	// create chain to store the data
+	TChain *chain = new TChain("Delphes");
+
+	// fill the chain based on the catalog_code provided by the user
+	chainMaker(chain,"BB-4p-0-300-v1510",true);
+	chainMaker(chain,"BB-4p-1300-2100-v1510",true);
+	chainMaker(chain,"BB-4p-2100-100000",true);
+	chainMaker(chain,"BB-4p-300-700-v1510",true);
+	chainMaker(chain,"BB-4p-700-1300-v1510",true);
+	chainMaker(chain,"BBB-4p-0-600-v1510",true);
+	chainMaker(chain,"BBB-4p-1300-100000-v1510",true);
+	chainMaker(chain,"BBB-4p-600-1300-v1510",true);
+	chainMaker(chain,"ttB-4p-0-900-v1510",true);
+	chainMaker(chain,"ttB-4p-1600-2500-v1510",true);
+	chainMaker(chain,"ttB-4p-2500-100000-v1510",true);
+	chainMaker(chain,"ttB-4p-900-1600-v1510",true);
+
+}
 
 void validateConf4v2backgrounds(){
 
-
 	// define map containing the cross sections
-	map<TString, Double_t > catalog_code_xsections_map;
-	catalog_code_xsections_map['BB-4p-0-300-v1510'] = 249.97710;
-	catalog_code_xsections_map['BB-4p-1300-2100-v1510'] = 0.41702;
-	catalog_code_xsections_map['BB-4p-2100-100000'] = 0.04770;
-	catalog_code_xsections_map['BB-4p-300-700-v1510'] = 35.23062;
-	catalog_code_xsections_map['BB-4p-700-1300-v1510'] = 4.13743;
-	catalog_code_xsections_map['BBB-4p-0-600-v1510'] = 2.57304;
-	catalog_code_xsections_map['BBB-4p-1300-100000-v1510'] = 0.01274;
-	catalog_code_xsections_map['BBB-4p-600-1300-v1510'] = 0.14935;
-	catalog_code_xsections_map['ttB-4p-0-900-v1510'] = 2.6673;
-	catalog_code_xsections_map['ttB-4p-1600-2500-v1510'] = 0.0237441;
-	catalog_code_xsections_map['ttB-4p-2500-100000-v1510'] = 0.00208816;
-	catalog_code_xsections_map['ttB-4p-900-1600-v1510'] = 0.250469;
+	// NEED TO FIX THIS SO THAT THESE ARE ACTUALLY STORED AND CAN BE RETRETIVED PROPERLY. RIGHT NOW 
+	// HAVE TO HARDCODE THEM AGAIN WHEN THESE CROSS SECTIONS ARE USED IN THE validateThisOneBackground() calls below.
+	// this needs to be fixed.
+	// map<TString, Double_t > catalog_code_xsections_map;
+	// catalog_code_xsections_map['BB-4p-0-300-v1510'] = 249.97710;
+	// catalog_code_xsections_map['BB-4p-1300-2100-v1510'] = 0.41702;
+	// catalog_code_xsections_map['BB-4p-2100-100000'] = 0.04770;
+	// catalog_code_xsections_map['BB-4p-300-700-v1510'] = 35.23062;
+	// catalog_code_xsections_map['BB-4p-700-1300-v1510'] = 4.13743;
+	// catalog_code_xsections_map['BBB-4p-0-600-v1510'] = 2.57304;
+	// catalog_code_xsections_map['BBB-4p-1300-100000-v1510'] = 0.01274;
+	// catalog_code_xsections_map['BBB-4p-600-1300-v1510'] = 0.14935;
+	// catalog_code_xsections_map['ttB-4p-0-900-v1510'] = 2.6673;
+	// catalog_code_xsections_map['ttB-4p-1600-2500-v1510'] = 0.0237441;
+	// catalog_code_xsections_map['ttB-4p-2500-100000-v1510'] = 0.00208816;
+	// catalog_code_xsections_map['ttB-4p-900-1600-v1510'] = 0.250469;
 	
 	// 1
-	Double_t BB_4p_0_300_v1510_info [] = {0,0,0,0,0,0,0};
-	validateThisOneBackground("BB-4p-0-300-v1510",catalog_code_xsections_map["BB-4p-0-300-v1510"],BB_4p_0_300_v1510_info);
+	Double_t BB_4p_0_300_v1510_info [] = {0,0,0,0,0,0,0,249.97710};
+	validateThisOneBackground("BB-4p-0-300-v1510",BB_4p_0_300_v1510_info[7],BB_4p_0_300_v1510_info);
 
 	// 2
-	Double_t BB_4p_1300_2100_v1510_info [] = {0,0,0,0,0,0,0};
-	validateThisOneBackground("BB-4p-1300-2100-v1510",catalog_code_xsections_map["BB-4p-1300-2100-v1510"], BB_4p_1300_2100_v1510_info );
+	Double_t BB_4p_1300_2100_v1510_info [] = {0,0,0,0,0,0,0,0.41702};
+	validateThisOneBackground("BB-4p-1300-2100-v1510",BB_4p_1300_2100_v1510_info[7], BB_4p_1300_2100_v1510_info );
 
 	// 3
-	Double_t BB_4p_2100_100000_info [] = {0,0,0,0,0,0,0};
-	validateThisOneBackground("BB-4p-2100-100000",catalog_code_xsections_map["BB-4p-2100-100000"], BB_4p_2100_100000_info );
+	Double_t BB_4p_2100_100000_info [] = {0,0,0,0,0,0,0,0.04770};
+	validateThisOneBackground("BB-4p-2100-100000",BB_4p_2100_100000_info[7], BB_4p_2100_100000_info );
 	
-	// 4
-	Double_t BB_4p_300_700_v1510_info [] = {0,0,0,0,0,0,0};
-	validateThisOneBackground("BB-4p-300-700-v1510",catalog_code_xsections_map["BB-4p-300-700-v1510"], BB_4p_300_700_v1510_info );
+	// // 4
+	Double_t BB_4p_300_700_v1510_info [] = {0,0,0,0,0,0,0,35.23062};
+	validateThisOneBackground("BB-4p-300-700-v1510",BB_4p_300_700_v1510_info[7], BB_4p_300_700_v1510_info );
 
-	// 5
-	Double_t BB_4p_700_1300_v1510_info [] = {0,0,0,0,0,0,0};
-	validateThisOneBackground("BB-4p-700-1300-v1510",catalog_code_xsections_map["BB-4p-700-1300-v1510"], BB_4p_700_1300_v1510_info  );
+	// // 5
+	Double_t BB_4p_700_1300_v1510_info [] = {0,0,0,0,0,0,0,4.13743};
+	validateThisOneBackground("BB-4p-700-1300-v1510",BB_4p_700_1300_v1510_info[7], BB_4p_700_1300_v1510_info  );
 	
-	// 6
-	Double_t BBB_4p_0_600_v1510_info [] = {0,0,0,0,0,0,0};
-	validateThisOneBackground("BBB-4p-0-600-v1510",catalog_code_xsections_map["BBB-4p-0-600-v1510"], BBB_4p_0_600_v1510_info );
+	// // // 6
+	// Double_t BBB_4p_0_600_v1510_info [] = {0,0,0,0,0,0,0,2.57304};
+	// validateThisOneBackground("BBB-4p-0-600-v1510",BBB_4p_0_600_v1510_info[7], BBB_4p_0_600_v1510_info );
 	
-	// 7	
-	Double_t BBB_4p_1300_100000_v1510_info [] = {0,0,0,0,0,0,0};
-	validateThisOneBackground("BBB-4p-1300-100000-v1510",catalog_code_xsections_map["BBB-4p-1300-100000-v1510"], BBB_4p_1300_100000_v1510_info );
+	// // // 7	
+	// Double_t BBB_4p_1300_100000_v1510_info [] = {0,0,0,0,0,0,0,0.01274};
+	// validateThisOneBackground("BBB-4p-1300-100000-v1510",BBB_4p_1300_100000_v1510_info[7], BBB_4p_1300_100000_v1510_info );
 
-	// 8	
-	Double_t BBB_4p_600_1300_v1510_info [] = {0,0,0,0,0,0,0};
-	validateThisOneBackground("BBB-4p-600-1300-v1510",catalog_code_xsections_map["BBB-4p-600-1300-v1510"], BBB_4p_600_1300_v1510_info );
+	// // // 8	
+	// Double_t BBB_4p_600_1300_v1510_info [] = {0,0,0,0,0,0,0,0.14935};
+	// validateThisOneBackground("BBB-4p-600-1300-v1510",BBB_4p_600_1300_v1510_info[7], BBB_4p_600_1300_v1510_info );
 	
-	// 9
-	Double_t ttB_4p_0_900_v1510_info [] = {0,0,0,0,0,0,0};
-	validateThisOneBackground("ttB-4p-0-900-v1510",catalog_code_xsections_map["ttB-4p-0-900-v1510"], ttB_4p_0_900_v1510_info );
+	// // // 9
+	// Double_t ttB_4p_0_900_v1510_info [] = {0,0,0,0,0,0,0,2.6673};
+	// validateThisOneBackground("ttB-4p-0-900-v1510",ttB_4p_0_900_v1510_info[7], ttB_4p_0_900_v1510_info );
 	
-	// 10
-	Double_t ttB_4p_1600_2500_v1510_info [] = {0,0,0,0,0,0,0};
-	validateThisOneBackground("ttB-4p-1600-2500-v1510",catalog_code_xsections_map["ttB-4p-1600-2500-v1510"], ttB_4p_1600_2500_v1510_info  );
+	// // // 10
+	// Double_t ttB_4p_1600_2500_v1510_info [] = {0,0,0,0,0,0,0,0.0237441};
+	// validateThisOneBackground("ttB-4p-1600-2500-v1510",ttB_4p_1600_2500_v1510_info[7], ttB_4p_1600_2500_v1510_info  );
 	
-	// 11
-	Double_t ttB_4p_2500_100000_v1510_info [] = {0,0,0,0,0,0,0};
-	validateThisOneBackground("ttB-4p-2500-100000-v1510",catalog_code_xsections_map["ttB-4p-2500-100000-v1510"], ttB_4p_2500_100000_v1510_info );
+	// // // 11
+	// Double_t ttB_4p_2500_100000_v1510_info [] = {0,0,0,0,0,0,0,0.00208816};
+	// validateThisOneBackground("ttB-4p-2500-100000-v1510",ttB_4p_2500_100000_v1510_info[7], ttB_4p_2500_100000_v1510_info );
 	
-	// 12
-	Double_t ttB_4p_900_1600_v1510_info [] = {0,0,0,0,0,0,0};
-	validateThisOneBackground("ttB-4p-900-1600-v1510",catalog_code_xsections_map["ttB-4p-900-1600-v1510"], ttB_4p_900_1600_v1510_info );
+	// // // 12
+	// Double_t ttB_4p_900_1600_v1510_info [] = {0,0,0,0,0,0,0,0.250469};
+	// validateThisOneBackground("ttB-4p-900-1600-v1510",ttB_4p_900_1600_v1510_info[7], ttB_4p_900_1600_v1510_info );
 	
 	// -------------------------------------------------
 	// PRINT INFORMATION TO A FILE
@@ -2636,21 +2712,37 @@ void validateConf4v2backgrounds(){
 	// table headings
 	printTableHeading();
 
-	printTableRow("ZH", "4v2", "BB-4p-0-300-v1510", catalog_code_xsections_map['BB-4p-0-300-v1510'], 3000, BB_4p_0_300_v1510_info);
-	printTableRow("ZH", "4v2", "BB-4p-1300-2100-v1510", catalog_code_xsections_map['BB-4p-1300-2100-v1510'], 3000, BB_4p_1300_2100_v1510_info);
-	printTableRow("ZH", "4v2", "BB-4p-2100-100000", catalog_code_xsections_map['BB-4p-2100-100000'], 3000, BB_4p_2100_100000_info);
-	printTableRow("ZH", "4v2", "BB-4p-300-700-v1510", catalog_code_xsections_map['BB-4p-300-700-v1510'], 3000, BB_4p_300_700_v1510_info);
-	printTableRow("ZH", "4v2", "BB-4p-700-1300-v1510", catalog_code_xsections_map['BB-4p-700-1300-v1510'], 3000, BB_4p_700_1300_v1510_info);
-	printTableRow("ZH", "4v2", "BBB-4p-0-600-v1510", catalog_code_xsections_map['BBB-4p-0-600-v1510'], 3000, BBB_4p_0_600_v1510_info);
+	//printTableRow("ZH", "4v2", "BB-4p-0-300-v1510", BB_4p_0_300_v1510_info[7], 3000, BB_4p_0_300_v1510_info);
+	printTableRow("ZH", "4v2", "BB-4p-1300-2100-v1510", BB_4p_1300_2100_v1510_info[7], 3000, BB_4p_1300_2100_v1510_info);
+	printTableRow("ZH", "4v2", "BB-4p-2100-100000", BB_4p_2100_100000_info[7], 3000, BB_4p_2100_100000_info);
+	printTableRow("ZH", "4v2", "BB-4p-300-700-v1510", BB_4p_300_700_v1510_info[7], 3000, BB_4p_300_700_v1510_info);
+	printTableRow("ZH", "4v2", "BB-4p-700-1300-v1510", BB_4p_700_1300_v1510_info[7], 3000, BB_4p_700_1300_v1510_info);
+	// printTableRow("ZH", "4v2", "BBB-4p-0-600-v1510", BBB_4p_0_600_v1510_info[7], 3000, BBB_4p_0_600_v1510_info);
+	// printTableRow("ZH", "4v2", "BBB-4p-1300-100000-v1510", BBB_4p_1300_100000_v1510_info[7], 3000, BBB_4p_1300_100000_v1510_info);
+	// printTableRow("ZH", "4v2", "BBB-4p-600-1300-v1510", BBB_4p_600_1300_v1510_info[7], 3000, BBB_4p_600_1300_v1510_info);
+	// printTableRow("ttH", "4v2", "ttB-4p-0-900-v1510", ttB_4p_0_900_v1510_info[7] , 3000, ttB_4p_0_900_v1510_info);
+	// printTableRow("ttH", "4v2", "ttB-4p-1600-2500-v1510", ttB_4p_1600_2500_v1510_info[7], 3000, ttB_4p_1600_2500_v1510_info);
+	// printTableRow("ttH", "4v2", "ttB-4p-2500-100000-v1510", ttB_4p_2500_100000_v1510_info[7], 3000, ttB_4p_2500_100000_v1510_info);
+	// printTableRow("ttH", "4v2", "ttB-4p-900-1600-v1510", ttB_4p_900_1600_v1510_info[7], 3000, ttB_4p_900_1600_v1510_info);
 
-	printTableRow("ZH", "4v2", "BBB-4p-0-600-v1510", catalog_code_xsections_map['BBB-4p-0-600-v1510'], 3000, BBB_4p_0_600_v1510_info);
-	printTableRow("ZH", "4v2", "BBB-4p-0-600-v1510", catalog_code_xsections_map['BBB-4p-0-600-v1510'], 3000, BBB_4p_0_600_v1510_info);
-	printTableRow("ZH", "4v2", "BBB-4p-0-600-v1510", catalog_code_xsections_map['BBB-4p-0-600-v1510'], 3000, BBB_4p_0_600_v1510_info);
-	printTableRow("ZH", "4v2", "BBB-4p-0-600-v1510", catalog_code_xsections_map['BBB-4p-0-600-v1510'], 3000, BBB_4p_0_600_v1510_info);
-	printTableRow("ZH", "4v2", "BBB-4p-0-600-v1510", catalog_code_xsections_map['BBB-4p-0-600-v1510'], 3000, BBB_4p_0_600_v1510_info);
-	printTableRow("ZH", "4v2", "BBB-4p-0-600-v1510", catalog_code_xsections_map['BBB-4p-0-600-v1510'], 3000, BBB_4p_0_600_v1510_info);
-	
 	cout << "------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
+}
+
+void printAllSampleEventAmount(){
+
+	printNumEvents("BB-4p-0-300-v1510",false);
+	printNumEvents("BB-4p-1300-2100-v1510",false);
+	printNumEvents("BB-4p-2100-100000",false);
+	printNumEvents("BB-4p-300-700-v1510",false);
+	printNumEvents("BB-4p-700-1300-v1510",false);
+	printNumEvents("BBB-4p-0-600-v1510",false);
+	printNumEvents("BBB-4p-1300-100000-v1510",false);
+	printNumEvents("BBB-4p-600-1300-v1510",false);
+	printNumEvents("ttB-4p-0-900-v1510",false);
+	printNumEvents("ttB-4p-1600-2500-v1510",false);
+	printNumEvents("ttB-4p-2500-100000-v1510",false);
+	printNumEvents("ttB-4p-900-1600-v1510",false);
+
 }
 
 void ZH(Bool_t regenerate=true){
