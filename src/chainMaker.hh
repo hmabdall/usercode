@@ -30,7 +30,11 @@ void chainMaker(TChain *chain, TString catalog_code, Bool_t regenerate){
   
   // create TString for where in /eos/cms/store the samples are located
   TString storeDir;
-  if (catalog_code == "HHToGGBB"){storeDir = "/store/group/phys_higgs/upgrade/PhaseII/Configuration4/140PileUp/HHToGGBB_14TeV";}
+  
+  // the signal catalog code
+  if (catalog_code == "HHToGGBB"){storeDir = "/store/group/phys_higgs/upgrade/PhaseII/Configuration4v2/140PileUp/HHToGGBB_14TeV";}
+  
+  // the various background codes
   else if (catalog_code == "BB-4p-0-300-v1510"){storeDir = "/store/group/phys_higgs/upgrade/PhaseII/Configuration4v2/140PileUp/BB-4p-0-300-v1510_14TEV";}
   else if (catalog_code == "BB-4p-1300-2100-v1510"){storeDir = "/store/group/phys_higgs/upgrade/PhaseII/Configuration4v2/140PileUp/BB-4p-1300-2100-v1510_14TEV";}
   else if (catalog_code == "BB-4p-2100-100000"){storeDir = "/store/group/phys_higgs/upgrade/PhaseII/Configuration4v2/140PileUp/BB-4p-2100-100000_14TEV";}
@@ -41,8 +45,9 @@ void chainMaker(TChain *chain, TString catalog_code, Bool_t regenerate){
   else if (catalog_code == "BBB-4p-600-1300-v1510"){storeDir = "/store/group/phys_higgs/upgrade/PhaseII/Configuration4v2/140PileUp/BBB-4p-600-1300-v1510_14TEV";}
   else if (catalog_code == "ttB-4p-0-900-v1510"){storeDir = "/store/group/phys_higgs/upgrade/PhaseII/Configuration4v2/140PileUp/ttB-4p-0-900-v1510_14TEV";}
   else if (catalog_code == "ttB-4p-1600-2500-v1510"){storeDir = "/store/group/phys_higgs/upgrade/PhaseII/Configuration4v2/140PileUp/ttB-4p-1600-2500-v1510_14TEV";}
-  else if (catalog_code == "ttB-4p-2500-100000-v1510"){storeDir = "/store/group/phys_higgs/upgrade/PhaseII/Configuration4/140PileUp/ttB-4p-2500-100000-v1510_14TEV";}
-  else if (catalog_code == "ttB-4p-900-1600-v1510"){storeDir = "/store/group/phys_higgs/upgrade/PhaseII/Configuration4/140PileUp/ttB-4p-900-1600-v1510_14TEV";}
+  else if (catalog_code == "ttB-4p-2500-100000-v1510"){storeDir = "/store/group/phys_higgs/upgrade/PhaseII/Configuration4v2/140PileUp/ttB-4p-2500-100000-v1510_14TEV";}
+  else if (catalog_code == "ttB-4p-900-1600-v1510"){storeDir = "/store/group/phys_higgs/upgrade/PhaseII/Configuration4v2/140PileUp/ttB-4p-900-1600-v1510_14TEV";}
+  else if (catalog_code == "HHToGGBB_14TeV"){storeDir = "/store/group/phys_higgs/upgrade/PhaseII/Configuration4v2/140PileUp/HHToGGBB_14TeV";}
   
   // prepare string to pass to the bash script that will generate the text file containing the root files in the sample specified
   char buffer[200];
@@ -97,6 +102,7 @@ void chainMaker(TChain *chain, TString catalog_code, Bool_t regenerate){
 
   // print information to console
   cout << endl << endl << "Chain successfully created.";
+  cout << "regenerated? " << regenerate << endl;
   if (regenerate) cout << "from newly generated list of root files";
     else cout << " from already existing list of root files. ";
   cout << "proceeding to run" << endl << endl;

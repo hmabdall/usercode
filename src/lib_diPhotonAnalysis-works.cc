@@ -970,7 +970,7 @@ void justAnalyzing(TString filename, Int_t phase, TString Rec_or_Gen){
 void printNumEvents(TString catalog_code){
 
  	TChain *chain = new TChain("Delphes");
- 	chainMaker(chain, catalog_code);
+ 	chainMaker(chain, catalog_code,true);
  	ExRootTreeReader *treeReader = new ExRootTreeReader(chain);
  	cout << "the treereader has been created." << endl;
  	Long64_t numberOfEntries = treeReader->GetEntries();
@@ -2290,14 +2290,18 @@ void validatingttB(){
   	cout << endl << endl;
 
 	// create chain to store the data
-	TChain *chain = new TChain("Delphes");
+	//TChain *chain = new TChain("Delphes");
 
 
 	// fill the chain based on the catalog_code provided by the user
 	chainMaker(chain, catalog_code);
 
-	printNumEvents("ttB");
-	TH1F *photonCountDistribution_hist = getPhotonCountDistributionHist(chain, Rec_or_Gen);
+	printNumEvents("ttB-4p-0-900-v1510");
+	printNumEvents("ttB-4p-1600-2500-v1510");
+	printNumEvents("ttB-4p-2500-100000-v1510");
+	printNumEvents("ttB-4p-900-1600-v1510");
+
+	/*TH1F *photonCountDistribution_hist = getPhotonCountDistributionHist(chain, Rec_or_Gen);
 
 	TH1F *bJetCountDistribution_hist = getBJetCountDistribution(chain);
 
@@ -2308,7 +2312,7 @@ void validatingttB(){
 
 	ttBcanvas->cd(2);
 	bJetCountDistribution_hist->Draw();
-
+*/
 }
 
 void ZH(){
