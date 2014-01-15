@@ -2218,8 +2218,8 @@ void tagAndProbeBJet(TString catalog_code,Bool_t regenerate=true){
 		 	if (distance != 5000) {
 		 		GenBJetMatched[g] = true;
 		 		// if it was matched also push this deltaR to the histogram
-				cout << "i actually got here. Press enter to continue. " << endl;
-				cin.get();
+				// cout << "i actually got here. Press enter to continue. " << endl;
+				// cin.get();
 				rec_gen_delR->Fill(distance);
 
 			 	// mark the one that was matched to the gen b jet as matched
@@ -2321,41 +2321,44 @@ void justValidating(TString catalog_code, Bool_t regenerate=true){
 
 void makeLargeChainsBefore(){
 	
+	// TChain *chain = new TChain("Delphes");
+	// chainMaker(chain, "BB-4p-0-300-v1510",true);
+	
+	// TChain *chain2 = new TChain("Delphes");
+	// chainMaker(chain2, "BB-4p-1300-2100-v1510",true);
+	
+	// TChain *chain3 = new TChain("Delphes");
+	// chainMaker(chain3, "BB-4p-2100-100000",true);
+	
+	// TChain *chain4 = new TChain("Delphes");
+	// chainMaker(chain4, "BB-4p-300-700-v1510",true);
+	
+	// TChain *chain5 = new TChain("Delphes");
+	// chainMaker(chain5, "BB-4p-700-1300-v1510",true);
+	
+	// TChain *chain6 = new TChain("Delphes");
+	// chainMaker(chain6, "BBB-4p-0-600-v1510",true);
+	
+	// TChain *chain7 = new TChain("Delphes");
+	// chainMaker(chain7, "BBB-4p-1300-100000-v1510",true);
+
+	// TChain *chain8 = new TChain("Delphes");
+	// chainMaker(chain8, "BBB-4p-600-1300-v1510",true);
+
+	// TChain *chain9 = new TChain("Delphes");
+	// chainMaker(chain9, "ttB-4p-0-900-v1510",true);
+
+	// TChain *chain10 = new TChain("Delphes");
+	// chainMaker(chain10, "ttB-4p-1600-2500-v1510",true);
+
+	// TChain *chain11 = new TChain("Delphes");
+	// chainMaker(chain11, "ttB-4p-2500-100000-v1510",true);
+
+	// TChain *chain12 = new TChain("Delphes");
+	// chainMaker(chain12, "ttB-4p-900-1600-v1510",true);
+
 	TChain *chain = new TChain("Delphes");
-	chainMaker(chain, "BB-4p-0-300-v1510",true);
-	
-	TChain *chain2 = new TChain("Delphes");
-	chainMaker(chain2, "BB-4p-1300-2100-v1510",true);
-	
-	TChain *chain3 = new TChain("Delphes");
-	chainMaker(chain3, "BB-4p-2100-100000",true);
-	
-	TChain *chain4 = new TChain("Delphes");
-	chainMaker(chain4, "BB-4p-300-700-v1510",true);
-	
-	TChain *chain5 = new TChain("Delphes");
-	chainMaker(chain5, "BB-4p-700-1300-v1510",true);
-	
-	TChain *chain6 = new TChain("Delphes");
-	chainMaker(chain6, "BBB-4p-0-600-v1510",true);
-	
-	TChain *chain7 = new TChain("Delphes");
-	chainMaker(chain7, "BBB-4p-1300-100000-v1510",true);
-
-	TChain *chain8 = new TChain("Delphes");
-	chainMaker(chain8, "BBB-4p-600-1300-v1510",true);
-
-	TChain *chain9 = new TChain("Delphes");
-	chainMaker(chain9, "ttB-4p-0-900-v1510",true);
-
-	TChain *chain10 = new TChain("Delphes");
-	chainMaker(chain10, "ttB-4p-1600-2500-v1510",true);
-
-	TChain *chain11 = new TChain("Delphes");
-	chainMaker(chain11, "ttB-4p-2500-100000-v1510",true);
-
-	TChain *chain12 = new TChain("Delphes");
-	chainMaker(chain12, "ttB-4p-900-1600-v1510",true);
+	chainMaker(chain, "HHToGGBB_14TeV",true);
 
 }
 
@@ -2535,8 +2538,8 @@ void validateThisOneSample(TString catalog_code, Double_t xsect, Double_t sample
 	cout << "bb_raw: " << bb_unnormalized_yield << endl;
 	cout << "gg_raw: " << gg_unnormalized_yield << endl;
 	cout << "bbgg_raw: " << bbgg_unnormalized_yield << endl;
-	cout << "press enter to continue, end of sample." << endl;
-	cin.get();
+	// cout << "press enter to continue, end of sample." << endl;
+	// cin.get();
 	// cout << "xsect" << xsect << endl;
 	// cout << "bb_unnormalized_yield" << bb_unnormalized_yield << endl;
 	// cout << "numEvents" << numEvents << endl;
@@ -2604,7 +2607,7 @@ void printTableHeading(){
 	
 	Int_t lumi = 3000;
 	cout << "----------------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
-	cout << setw(4) << "TYPE" << " | " << setw(6) << "CONFIG" << " | "  << setw(22) << "SAMPLE SET" << " | " << setw(9) << " # Events" << " | " << setw(12) << " X-SECT";
+	cout << setw(4) << "TYPE" << " | " << setw(6) << "CONFIG" << " | "  << setw(25) << "SAMPLE SET" << " | " << setw(9) << " # Events" << " | " << setw(12) << " X-SECT";
 	cout << " | " << setw(5) << "LUMI" << " | " << setw(12) << "BB_RAW" << " | " << setw(7) << "GG_RAW" << " | " << setw(9) << "BBGG_RAW";
 	cout << " | " <<  setw(11) << "N_BB" << " | " << setw(11) << "N_GG" << " | " << setw(11) << "N_BBGG" << " | " << endl;
 
@@ -2615,18 +2618,18 @@ void printTableRow(TString BG, TString config, TString sample_set, Double_t xsec
 	Int_t numEvents = sample_set_info[0];
 
 
-	Double_t N_bb = ((xsect * lumi )/(sample_set_info[1] / numEvents));
-	//cout << " "
-	Double_t N_gg = ((xsect * lumi )/(sample_set_info[2] / numEvents));
-	Double_t N_bbgg = ((xsect * lumi )/(sample_set_info[3] / numEvents));
+	Double_t N_bb = xsect * lumi * (sample_set_info[1]/numEvents);
+	Double_t N_gg = xsect * lumi * (sample_set_info[2]/numEvents);
+	Double_t N_bbgg = xsect * lumi * (sample_set_info[3]/numEvents);
 
 	// row 1 																																			   
 	cout << "----------------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
-	cout << setw(4) << BG << " | " << setw(6) << config << " | "  << setw(22) << sample_set << " | " << setw(9) << sample_set_info[0] << " | " << setw(12) << xsect;
+	cout << setw(4) << BG << " | " << setw(6) << config << " | "  << setw(25) << sample_set << " | " << setw(9) << sample_set_info[0] << " | " << setw(12) << xsect;
 	cout << " | " << setw(5) << lumi << " | " << setw(12) << sample_set_info[1] << " | " << setw(7) << sample_set_info[2] << " | " << setw(9) << sample_set_info[3];
 	cout << " | " <<  setw(10) << N_bb << " | " << setw(10) << N_gg << " | " << setw(10) << N_bbgg << " | " << endl;
 
 }
+
 void regenerateTheseTextFiles(){
 
 	// create chain to store the data
@@ -2669,52 +2672,60 @@ void validateConf4v2Samples(){
 	// catalog_code_xsections_map['ttB-4p-900-1600-v1510'] = 0.250469;
 	
 	// 1
-	// Double_t BB_4p_0_300_v1510_info [] = {0,0,0,0,0,0,0,249.97710};
-	// validateThisOneSample("BB-4p-0-300-v1510",BB_4p_0_300_v1510_info[7],BB_4p_0_300_v1510_info);
+	Double_t BB_4p_0_300_v1510_info [] = {0,0,0,0,0,0,0,249.97710};
+	validateThisOneSample("BB-4p-0-300-v1510",BB_4p_0_300_v1510_info[7],BB_4p_0_300_v1510_info);
 
 	// 2
-	// Double_t BB_4p_1300_2100_v1510_info [] = {0,0,0,0,0,0,0,0.41702};
-	// validateThisOneSample("BB-4p-1300-2100-v1510",BB_4p_1300_2100_v1510_info[7], BB_4p_1300_2100_v1510_info );
+	Double_t BB_4p_1300_2100_v1510_info [] = {0,0,0,0,0,0,0,0.41702};
+	validateThisOneSample("BB-4p-1300-2100-v1510",BB_4p_1300_2100_v1510_info[7], BB_4p_1300_2100_v1510_info );
 
 	// 3
 	Double_t BB_4p_2100_100000_info [] = {0,0,0,0,0,0,0,0.04770};
 	validateThisOneSample("BB-4p-2100-100000",BB_4p_2100_100000_info[7], BB_4p_2100_100000_info );
 	
-	// // // 4
-	// Double_t BB_4p_300_700_v1510_info [] = {0,0,0,0,0,0,0,35.23062};
-	// validateThisOneSample("BB-4p-300-700-v1510",BB_4p_300_700_v1510_info[7], BB_4p_300_700_v1510_info );
+	// 4
+	Double_t BB_4p_300_700_v1510_info [] = {0,0,0,0,0,0,0,35.23062};
+	validateThisOneSample("BB-4p-300-700-v1510",BB_4p_300_700_v1510_info[7], BB_4p_300_700_v1510_info );
 
 	// // // 5
-	// Double_t BB_4p_700_1300_v1510_info [] = {0,0,0,0,0,0,0,4.13743};
-	// validateThisOneSample("BB-4p-700-1300-v1510",BB_4p_700_1300_v1510_info[7], BB_4p_700_1300_v1510_info  );
+	Double_t BB_4p_700_1300_v1510_info [] = {0,0,0,0,0,0,0,4.13743};
+	validateThisOneSample("BB-4p-700-1300-v1510",BB_4p_700_1300_v1510_info[7], BB_4p_700_1300_v1510_info  );
 	
-	// // // 6
-	// Double_t BBB_4p_0_600_v1510_info [] = {0,0,0,0,0,0,0,2.57304};
-	// validateThisOneSample("BBB-4p-0-600-v1510",BBB_4p_0_600_v1510_info[7], BBB_4p_0_600_v1510_info );
+	// 6
+	Double_t BBB_4p_0_600_v1510_info [] = {0,0,0,0,0,0,0,2.57304};
+	validateThisOneSample("BBB-4p-0-600-v1510",BBB_4p_0_600_v1510_info[7], BBB_4p_0_600_v1510_info );
 	
-	// // // 7	
-	// Double_t BBB_4p_1300_100000_v1510_info [] = {0,0,0,0,0,0,0,0.01274};
-	// validateThisOneSample("BBB-4p-1300-100000-v1510",BBB_4p_1300_100000_v1510_info[7], BBB_4p_1300_100000_v1510_info );
+	// 7	
+	Double_t BBB_4p_1300_100000_v1510_info [] = {0,0,0,0,0,0,0,0.01274};
+	validateThisOneSample("BBB-4p-1300-100000-v1510",BBB_4p_1300_100000_v1510_info[7], BBB_4p_1300_100000_v1510_info );
 
-	// // // 8	
-	// Double_t BBB_4p_600_1300_v1510_info [] = {0,0,0,0,0,0,0,0.14935};
-	// validateThisOneSample("BBB-4p-600-1300-v1510",BBB_4p_600_1300_v1510_info[7], BBB_4p_600_1300_v1510_info );
+	// 8	
+	Double_t BBB_4p_600_1300_v1510_info [] = {0,0,0,0,0,0,0,0.14935};
+	validateThisOneSample("BBB-4p-600-1300-v1510",BBB_4p_600_1300_v1510_info[7], BBB_4p_600_1300_v1510_info );
 	
-	// // // 9
-	// Double_t ttB_4p_0_900_v1510_info [] = {0,0,0,0,0,0,0,2.6673};
-	// validateThisOneSample("ttB-4p-0-900-v1510",ttB_4p_0_900_v1510_info[7], ttB_4p_0_900_v1510_info );
+	// 9
+	Double_t ttB_4p_0_900_v1510_info [] = {0,0,0,0,0,0,0,2.6673};
+	validateThisOneSample("ttB-4p-0-900-v1510",ttB_4p_0_900_v1510_info[7], ttB_4p_0_900_v1510_info );
 	
-	// // // 10
-	// Double_t ttB_4p_1600_2500_v1510_info [] = {0,0,0,0,0,0,0,0.0237441};
-	// validateThisOneSample("ttB-4p-1600-2500-v1510",ttB_4p_1600_2500_v1510_info[7], ttB_4p_1600_2500_v1510_info  );
+	// 10
+	Double_t ttB_4p_1600_2500_v1510_info [] = {0,0,0,0,0,0,0,0.0237441};
+	validateThisOneSample("ttB-4p-1600-2500-v1510",ttB_4p_1600_2500_v1510_info[7], ttB_4p_1600_2500_v1510_info  );
 	
-	// // // 11
-	// Double_t ttB_4p_2500_100000_v1510_info [] = {0,0,0,0,0,0,0,0.00208816};
-	// validateThisOneSample("ttB-4p-2500-100000-v1510",ttB_4p_2500_100000_v1510_info[7], ttB_4p_2500_100000_v1510_info );
+	// 11
+	Double_t ttB_4p_2500_100000_v1510_info [] = {0,0,0,0,0,0,0,0.00208816};
+	validateThisOneSample("ttB-4p-2500-100000-v1510",ttB_4p_2500_100000_v1510_info[7], ttB_4p_2500_100000_v1510_info );
 	
-	// // // 12
-	// Double_t ttB_4p_900_1600_v1510_info [] = {0,0,0,0,0,0,0,0.250469};
-	// validateThisOneSample("ttB-4p-900-1600-v1510",ttB_4p_900_1600_v1510_info[7], ttB_4p_900_1600_v1510_info );
+	// 12
+	Double_t ttB_4p_900_1600_v1510_info [] = {0,0,0,0,0,0,0,0.250469};
+	validateThisOneSample("ttB-4p-900-1600-v1510",ttB_4p_900_1600_v1510_info[7], ttB_4p_900_1600_v1510_info );
+	
+	Double_t lumi_factor = 40;
+	Double_t br_H_gg = 0.00228;
+	Double_t br_H_bb = .577;
+	Double_t signal_xsect = 2 * lumi_factor * br_H_gg * br_H_bb; 
+	Double_t HHToGGBB_14TeV_info [] = {0,0,0,0,0,0,0,signal_xsect};
+
+	validateThisOneSample("HHToGGBB_14TeV",HHToGGBB_14TeV_info[7], HHToGGBB_14TeV_info );
 	
 	// -------------------------------------------------
 	// PRINT INFORMATION TO A FILE
@@ -2723,19 +2734,21 @@ void validateConf4v2Samples(){
 	// table headings
 	printTableHeading();
 
-	// printTableRow("ZH", "4v2", "BB-4p-0-300-v1510", BB_4p_0_300_v1510_info[7], 3000, BB_4p_0_300_v1510_info);
-	//printTableRow("ZH", "4v2", "BB-4p-1300-2100-v1510", BB_4p_1300_2100_v1510_info[7], 3000, BB_4p_1300_2100_v1510_info);
+	printTableRow("ZH", "4v2", "BB-4p-0-300-v1510", BB_4p_0_300_v1510_info[7], 3000, BB_4p_0_300_v1510_info);
+	printTableRow("ZH", "4v2", "BB-4p-1300-2100-v1510", BB_4p_1300_2100_v1510_info[7], 3000, BB_4p_1300_2100_v1510_info);
 	printTableRow("ZH", "4v2", "BB-4p-2100-100000", BB_4p_2100_100000_info[7], 3000, BB_4p_2100_100000_info);
-	// printTableRow("ZH", "4v2", "BB-4p-300-700-v1510", BB_4p_300_700_v1510_info[7], 3000, BB_4p_300_700_v1510_info);
-	// printTableRow("ZH", "4v2", "BB-4p-700-1300-v1510", BB_4p_700_1300_v1510_info[7], 3000, BB_4p_700_1300_v1510_info);
-	// printTableRow("ZH", "4v2", "BBB-4p-0-600-v1510", BBB_4p_0_600_v1510_info[7], 3000, BBB_4p_0_600_v1510_info);
-	// printTableRow("ZH", "4v2", "BBB-4p-1300-100000-v1510", BBB_4p_1300_100000_v1510_info[7], 3000, BBB_4p_1300_100000_v1510_info);
-	// printTableRow("ZH", "4v2", "BBB-4p-600-1300-v1510", BBB_4p_600_1300_v1510_info[7], 3000, BBB_4p_600_1300_v1510_info);
-	// printTableRow("ttH", "4v2", "ttB-4p-0-900-v1510", ttB_4p_0_900_v1510_info[7] , 3000, ttB_4p_0_900_v1510_info);
-	// printTableRow("ttH", "4v2", "ttB-4p-1600-2500-v1510", ttB_4p_1600_2500_v1510_info[7], 3000, ttB_4p_1600_2500_v1510_info);
-	// printTableRow("ttH", "4v2", "ttB-4p-2500-100000-v1510", ttB_4p_2500_100000_v1510_info[7], 3000, ttB_4p_2500_100000_v1510_info);
-	// printTableRow("ttH", "4v2", "ttB-4p-900-1600-v1510", ttB_4p_900_1600_v1510_info[7], 3000, ttB_4p_900_1600_v1510_info);
+	printTableRow("ZH", "4v2", "BB-4p-300-700-v1510", BB_4p_300_700_v1510_info[7], 3000, BB_4p_300_700_v1510_info);
+	printTableRow("ZH", "4v2", "BB-4p-700-1300-v1510", BB_4p_700_1300_v1510_info[7], 3000, BB_4p_700_1300_v1510_info);
+	printTableRow("ZH", "4v2", "BBB-4p-0-600-v1510", BBB_4p_0_600_v1510_info[7], 3000, BBB_4p_0_600_v1510_info);
+	printTableRow("ZH", "4v2", "BBB-4p-1300-100000-v1510", BBB_4p_1300_100000_v1510_info[7], 3000, BBB_4p_1300_100000_v1510_info);
+	printTableRow("ZH", "4v2", "BBB-4p-600-1300-v1510", BBB_4p_600_1300_v1510_info[7], 3000, BBB_4p_600_1300_v1510_info);
+	printTableRow("ttH", "4v2", "ttB-4p-0-900-v1510", ttB_4p_0_900_v1510_info[7] , 3000, ttB_4p_0_900_v1510_info);
+	printTableRow("ttH", "4v2", "ttB-4p-1600-2500-v1510", ttB_4p_1600_2500_v1510_info[7], 3000, ttB_4p_1600_2500_v1510_info);
+	printTableRow("ttH", "4v2", "ttB-4p-2500-100000-v1510", ttB_4p_2500_100000_v1510_info[7], 3000, ttB_4p_2500_100000_v1510_info);
+	printTableRow("ttH", "4v2", "ttB-4p-900-1600-v1510", ttB_4p_900_1600_v1510_info[7], 3000, ttB_4p_900_1600_v1510_info);
 
+	// print signal table row
+	printTableRow("BBGG", "4v2", "HHToGGBB_14TeV", HHToGGBB_14TeV_info[7], 3000, HHToGGBB_14TeV_info);	
 	cout << "----------------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
 }
 
