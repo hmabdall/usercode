@@ -1,3 +1,4 @@
 This repository is a clone of work I did at the MIT Lab for Nuclear Science studying di-Higgs production and bbgg 
 decay channels at the Large Hadron Collider. The scripts interacts with data stored on the CERN computing grid. The main
-file of interest is the script lib_diPhotonAnalysis.cc which contains the various event selection methods. The chainMaker.hh is also the primary file used to interact with the data stored at CERN. 
+file of interest is the script lib_diPhotonAnalysis.cc which contains the various event selection methods. The 
+chainMaker.hh is also the primary file used to interact with the data stored at CERN. 
